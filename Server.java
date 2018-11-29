@@ -42,8 +42,17 @@ class Server implements Runnable{
 	public void run(){
 
 		while(true){
+			
+			try{
+			
+				server_socket = new ServerSocket(PORT);
+				listenForConnection();		
 
-			//listenForConnection();		
+			}catch(Exception e){
+				
+				System.out.println("Server Creation Failed...");	
+
+			}//end try
 
 		}//end while
 
@@ -55,7 +64,21 @@ class Server implements Runnable{
 
 	public void listenForConnection(){
 
+		try{
+
+			new_conneciton = server_socket.accept();
+
+		}catch(Exception e){
+	
+			System.out.println("No conneciton...");
+		}//end try
+
 	}//end listenForConnection
 
-	
+	public static void main(String[] args){
+
+		Server s = new Server();
+		s.listenForConneciton();
+		
+	}//end main test	
 }//end Class Server
