@@ -41,7 +41,7 @@ public class User{
 			System.out.println("Connecting to server...");
 				
 			connection = new Socket(IP,PORT);
-			in = new BufferedReader(new inputStreamReader(connection.getInputStream()));
+			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			out = new PrintWriter(connection.getOutputStream(),true); 
 
 			System.out.println("User "+ user_name + " created, connected to server at IP: " + 
