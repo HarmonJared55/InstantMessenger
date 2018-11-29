@@ -34,25 +34,25 @@ class Server implements Runnable{
 
 	public Server(){
 
-		//init rooms and users
-		//call the run method
+		//init rooms, users and server_socket
+		try{
 
+			server_socket = new ServerSocket(PORT);
+
+		}catch(Exception e){
+		
+			System.out.println("Failed to create sever socket");		
+
+		}//end try
+
+		run();
 	}//end Server Constructor
 
 	public void run(){
 
 		while(true){
 			
-			try{
-			
-				server_socket = new ServerSocket(PORT);
 				listenForConnection();		
-
-			}catch(Exception e){
-				
-				System.out.println("Server Creation Failed...");	
-
-			}//end try
 
 		}//end while
 
@@ -60,14 +60,16 @@ class Server implements Runnable{
 
 	public int menu(){
 
+		return 0;
+
 	}//end menu
 
 	public void listenForConnection(){
 
 		try{
-
-			new_conneciton = server_socket.accept();
-
+			System.out.println("Listening for connection...");
+			new_connection = server_socket.accept();
+			System.out.println("Connection established...");
 		}catch(Exception e){
 	
 			System.out.println("No conneciton...");
@@ -78,7 +80,6 @@ class Server implements Runnable{
 	public static void main(String[] args){
 
 		Server s = new Server();
-		s.listenForConneciton();
 		
 	}//end main test	
 }//end Class Server
