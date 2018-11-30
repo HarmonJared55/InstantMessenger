@@ -92,6 +92,9 @@ class Server{
 
 	/*
  	 * addUser method
+ 	 *
+ 	 * This method adds a user to the user array for access
+ 	 * It then calls the notifyUsers method and starts the thread
  	 */ 
 	public void addUser(){
 
@@ -110,6 +113,14 @@ class Server{
 
 	}//end addUser
 
+	/*
+ 	 * notifyUsers Method
+ 	 *
+ 	 * Notifys all other user threads of creation of new users
+ 	 * calls user class addUser method
+ 	 *
+ 	 * Does not call adduser on itsself becuase it will already have a pointer to itsself in its array of users
+ 	 */ 
 	public void notifyUsers(User user){
 
 		for(int i = 0; i < MAX_USERS; i++){
