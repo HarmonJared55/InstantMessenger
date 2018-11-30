@@ -4,6 +4,8 @@
 //File Created: 10/29/18
 //Last Edited : 10/30/18
 
+//Version 1.0
+
 /* This file is the implementaion of the user class
  *
  * This class is intened to be run as a thread so that multiple clients can connect to the server at the same time. 
@@ -143,16 +145,20 @@ public class User extends Thread{
 	
 	public void addUser(User user){
 
-		for(int i = 0; i < max_users; i++){
+		if(!user.getUserName().equalsIgnoreCase(user_name)){
 
-			if(users[i] == null){
+			for(int i = 0; i < max_users; i++){
+
+				if(users[i] == null){
 				
-				//if the users[i] index is null
-				users[i] = user;		
+					//if the users[i] index is null
+					users[i] = user;		
+	
+				}//end if
+	
+			}//end for
 
-			}//end if
-
-		}//end for
+		}//end if
 
 	}//end add User
 
@@ -211,20 +217,3 @@ public class User extends Thread{
 	}//end getOUT
 
 }//end class User
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
