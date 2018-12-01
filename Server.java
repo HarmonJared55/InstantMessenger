@@ -4,7 +4,7 @@
 //File Created: 10/27/18
 //Last Editied: 10/30/18
 
-//Version 1.0
+//Version 2.0
 
 /* This class is the main class of the server
  *
@@ -44,16 +44,16 @@ class Server{
 
 		//init rooms, users and server_socket
 		try{
-
+			System.out.println("Createing server on Port: " + PORT);
 			server_socket = new ServerSocket(PORT);
 			users = new User[MAX_USERS]; 
 
 		}catch(Exception e){
 
-			System.out.println("Failed to create sever socket");		
+			e.printStackTrace();
 
 		}//end try
-
+		
 		listenForConnection();
 
 	}//end Server Constructor
@@ -83,7 +83,9 @@ class Server{
 			 	addUser();			
 
 			}catch(Exception e){
-				System.out.println("No conneciton...");
+			
+				e.printStackTrace();
+			
 			}//end try
 
 		}//end while
@@ -98,12 +100,14 @@ class Server{
  	 */ 
 	public void addUser(){
 
+	User temp = null;	
+
 		for(int i = 0; i < MAX_USERS; i++){
 
 			if(users[i] == null){
 
 				users[i] = new User(new_connection, users);
-				notifyUsers(users[i]);					
+				temp = users[i];
 				users[i].start();
 				break;
 			
@@ -111,6 +115,7 @@ class Server{
 
 		}//end for	
 
+		notifyUsers(temp);					
 	}//end addUser
 
 	/*
@@ -118,8 +123,6 @@ class Server{
  	 *
  	 * Notifys all other user threads of creation of new users
  	 * calls user class addUser method
- 	 *
- 	 * Does not call adduser on itsself becuase it will already have a pointer to itsself in its array of users
  	 */ 
 	public void notifyUsers(User user){
 
@@ -128,7 +131,8 @@ class Server{
 			if(users[i] != null){
 
 				users[i].addUser(user);
-
+				break;	
+	
 			}//end if 
 
 		}//end for
