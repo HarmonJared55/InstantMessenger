@@ -4,14 +4,13 @@
 //File Created: 10/29/18
 //Last Edited : 10/30/18
 
-//Version 1.0
+//Version 2.0
 
 /* This file is the implementaion of the user class
  *
  * This class is intened to be run as a thread so that multiple clients can connect to the server at the same time. 
  * Each thread holds the username of the user, input and output streams and the actual socket connection
  * It also contains a copy of the users array that is part of its constructors paramater
- *
  */
 
 //imported classes
@@ -52,11 +51,15 @@ public class User extends Thread{
 		try{
 		
 			connection = s;
+
 			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			out = new PrintWriter(connection.getOutputStream(),true); 
 			max_users = users.length;
 			this.users = users;
-				
+		
+			out.println("Enter username");
+			user_name = in.readLine();
+		
 		}catch(Exception e){
 
 			System.out.println("Failed to create user");		
@@ -79,19 +82,19 @@ public class User extends Thread{
 	public void run(){
 
 		try{
-
-			//get user_name
-			out.println("Enter User Name:");
-			user_name = in.readLine();
-
+			
 			//welcome the user to the chatroom
 			out.println("Welcome " + user_name + " to the chat room!");
-			out.println("Type your message or '/exit' to exit");
+			listCommands();			
 
 			//announce entrance of new user to all users
 			for(int i = 0; i < max_users; i++){
-				
-				users[i].getOUT().println("User " + user_name + " connected!");
+	
+				if(users[i] != null){			
+	
+					users[i].getOUT().println("User " + user_name + " connected!");
+
+				}//end if
 
 			}//end for	
 	
@@ -102,8 +105,28 @@ public class User extends Thread{
 		
 				if(message.equalsIgnoreCase("/exit")){
 
-					//user wants to exit
+					out.close();
+					in.close();
+					connection.close();
 					break;
+
+				}else if(message.startsWith("@")){
+
+					String target_user_name = message.substring(1,message.indexOf(" "));
+			
+					message = message.substring(message.indexOf(" "));	
+						
+					for(int i = 0; i < max_users; i++){
+
+						if(users[i].getUserName().equalsIgnoreCase(target_user_name)){
+			
+							users[i].getOUT().println("Private Message from <" + user_name + "> " + message);
+							break;
+
+						}//end if
+		
+					}//end for
+					
 
 				}else{
 
@@ -113,7 +136,7 @@ public class User extends Thread{
 						if(users[i] != null && !users[i].getUserName().equalsIgnoreCase(user_name)){
 
 							//if there is a user and that user is not the current thread
-							users[i].getOUT().println(message);
+							users[i].getOUT().println("<" + user_name + "> " + message);
 
 						}//end if
 
@@ -122,10 +145,13 @@ public class User extends Thread{
 				}//end else
 
 			}//end while
-		
+			
+			
+	
 	        }catch(Exception e){
 	
-			System.out.println("Thread failed...");		
+			e.printStackTrace();		
+			out.println("User not found");
 
 		}//end try	
 
@@ -149,10 +175,13 @@ public class User extends Thread{
 
 			for(int i = 0; i < max_users; i++){
 
-				if(users[i] == null){
+				if(users[i].getUserName().equalsIgnoreCase(user_name)){
+					break;
+				}else if(users[i] == null){
 				
 					//if the users[i] index is null
 					users[i] = user;		
+					break;
 	
 				}//end if
 	
@@ -175,7 +204,7 @@ public class User extends Thread{
 
 		for(int i = 0; i < max_users; i++){
 
-			if(users[i].getUserName().equalsIgnoreCase(user_name)){
+			if(!this.user_name.equalsIgnoreCase(user_name)){
 
 				users[i] = null;
 				return true;
@@ -189,9 +218,25 @@ public class User extends Thread{
 	}//end deleteUser
 
 	/*
+ 	 * lists out all avaliable commands
+ 	 *
+ 	 * easily extensible
+ 	 */ 	
+	public void listCommands(){
+
+		out.println("Commands");
+		out.println("Exit: /exit");
+		out.println("Private Message: @username message example: @bob hello world");
+		out.println("List Messages: /list");
+		out.println("List Users: /users");
+		out.println("Search Previous Messages: /search");
+		out.println("List messages from user: /listuser");
+
+	}//end list commands
+
+	/*
  	* Getters and Setters
  	*/
-
 	public String getUserName(){
 		
 		return user_name;
