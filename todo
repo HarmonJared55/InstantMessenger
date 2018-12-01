@@ -1,0 +1,14 @@
+CLIENT:
+	
+	GUI Wrapper
+
+SERVER:
+	
+	Add ability to check for users that have disconnected
+		Check for closed connections
+		Add multiroom support
+	
+USER:
+	Close connection if user exits
+	Add rest of commands that are in the list commands method	
+		Use a Message linked list to show data structures

@@ -1,5 +1,5 @@
-instantmessenger: Server.java User.java
-	javac Server.java User.java
+instantmessenger: Server.java User.java Client.java
+	javac Server.java User.java Client.java
 
 runserver: 
 	java Server

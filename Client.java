@@ -44,7 +44,7 @@ public class Client{
 	public Client(){
 
 		try{
-
+			System.out.println("Connecting to Server..");
 			connection = new Socket(IP,PORT);
 			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			out = new PrintWriter(connection.getOutputStream(),true);		
@@ -82,6 +82,8 @@ public class Client{
 				if(message.equalsIgnoreCase("/exit")){
 					
 					stillRunning = false;
+					System.out.println("GoodBye");
+					System.exit(0);
 
 				}else{
 	
