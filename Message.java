@@ -20,7 +20,7 @@ public class Message{
 	public Message(String message, Message next){
 
 		user = message.substring(0,message.indexOf(" "));
-		this.message = message.substring(message.indexOf(" ");
+		this.message = message.substring(message.indexOf(" "));
 		this.next = next;	
 
 	}//end message
@@ -37,10 +37,15 @@ public class Message{
 
 	}//end getUser
 
-	public Message getNext(){
+	public Message next(){
 
 		return next;
 
 	}//end getNext()
 
+	public void setNext(Message next){
+
+		this.next = next;
+
+	}//end setNext()
 }//end Message class
