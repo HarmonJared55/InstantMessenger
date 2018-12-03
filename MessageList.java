@@ -15,7 +15,7 @@
 
 import java.io.*;
 
-class MessageList implements Serializable{
+class MessageList{
 
 	private static final int MAX_MESSAGES = 100;
 	private static Message head;
@@ -87,25 +87,5 @@ class MessageList implements Serializable{
 		}//end while
 
 	}//end listMessages
-	
-
-	public void listMessages(PrintWriter out,String user_name){
-
-		Message current = head;
-		
-		while(current != null ){
-			
-			if(current.getUser().equalsIgnoreCase(user_name.substring(1))){
-
-				out.println("<" + current.getUser() + "> " + current.getMessage());
-				current = current.next();
-
-			}//end if
-		}//end while
-
-	}//end listMessages
-		
-
-
 	
 }//end MessageList
