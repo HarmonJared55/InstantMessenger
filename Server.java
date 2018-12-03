@@ -23,7 +23,7 @@ class Server{
 
 	//inmutable class memebers
 	private final int PORT = 1234;
-	private final int MAX_USERS = 10;
+	private final int MAX_USERS = 50;
 
 	// class members
 	private ServerSocket server_socket;
@@ -78,7 +78,8 @@ class Server{
 				System.out.println("Listening for connection...");
 				new_connection = server_socket.accept();
 				System.out.println("Connection established...");
-
+				
+				closeConnections();
 			        //create new user, notify all threads of creation
 			 	addUser();			
 
@@ -138,6 +139,31 @@ class Server{
 		}//end for
 	
 	}//end notify
+
+	public void closeConnections(){
+
+		System.out.println("Before loop");
+		for(int i = 0; i < MAX_USERS; i++){
+
+			
+			if(users[i] != null){
+
+				System.out.println("user not null");
+				System.out.println(users[i].hasUserExited());
+				if(users[i].hasUserExited()){
+							
+					System.out.println("user is gone deleting...");
+					users[i].deleteUser(users[i].getUserName());
+					users[i] = null;
+					System.out.println("Successfull Deletion");
+
+				}//end if
+
+			}//end if	
+
+		}//end for
+
+	}//end close connections
 
 	public static void main(String[] args){
 

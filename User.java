@@ -2,15 +2,15 @@
 
 //Author: Jared Harmon
 //File Created: 10/29/18
-//Last Edited : 10/30/18
+//Last Edited : 10/31/18
 
 //Version 2.0
 
-/* This file is the implementaion of the user class
+/* This file is the implementaion of the class User
  *
- * This class is intened to be run as a thread so that multiple clients can connect to the server at the same time. 
- * Each thread holds the username of the user, input and output streams and the actual socket connection
- * It also contains a copy of the users array that is part of its constructors paramater
+ * The user class extends from the java class thread. 
+ * It allows multiple dicreate clients to connect to the server
+ * and communicate.
  */
 
 //imported classes
@@ -26,11 +26,14 @@ public class User extends Thread{
 	private final String IP = "127.0.0.1";
 
 	//member varibales
+	private MessageList ml = new MessageList();
 	private int max_users;
 	private String user_name;
 	private Socket connection;
 	private BufferedReader in;
 	private PrintWriter out;
+	private boolean has_user_exited;
+	private String message;
 
 	//array of all other user threads for easy communication
 	private User[] users;
@@ -51,23 +54,32 @@ public class User extends Thread{
 		try{
 		
 			connection = s;
-
 			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			out = new PrintWriter(connection.getOutputStream(),true); 
 			max_users = users.length;
 			this.users = users;
 		
-			out.println("Enter username");
+			out.println("\nSuccessfully connected to server| IP: " + IP + " PORT: " + PORT + "\n");
+			out.println("******************************************");
+			out.println("*                                        *");
+			out.println("*          Instant Messenger             *");
+			out.println("*                 v2.0                   *");
+			out.println("*             HighG Studio               *");
+			out.println("*                                        *");
+			out.println("******************************************");
+
+			out.println("\nEnter a username");
 			user_name = in.readLine();
-		
+			has_user_exited = false;
+	
 		}catch(Exception e){
 
-			System.out.println("Failed to create user");		
+			System.out.println("Connection Error!!!");		
 	
 		}//end try
 		
 	}//end User Constructor
-	
+
 	/*
  	 * Run function
  	 * 
@@ -76,44 +88,47 @@ public class User extends Thread{
  	 * This class is the bread and butter of the user thread
  	 * It gets the user name that the client enters, welcomes and announces
  	 * the user, and starts the main messaging loop
- 	 *
+ 	 * 
+ 	 * It controls all the input and output to all the users. 
+ 	 * It also parses the messages and looks for commands
  	 */		
 
 	public void run(){
 
 		try{
 			
-			//welcome the user to the chatroom
-			out.println("Welcome " + user_name + " to the chat room!");
-			listCommands();			
-
+			//welcome the user to the chatroom and let them know what they can do
+			out.println("\nWelcome to the chat room " + user_name + "!");
+			out.println("\nType /help for a list of commands");			
+			out.println("-------------------CHAT----------------------\n");
 			//announce entrance of new user to all users
 			for(int i = 0; i < max_users; i++){
 	
-				if(users[i] != null){			
+				if(users[i] != null && !users[i].getUserName().equalsIgnoreCase(user_name)){			
 	
 					users[i].getOUT().println("User " + user_name + " connected!");
 
 				}//end if
 
 			}//end for	
-	
+
 			//start messaging
 			while(true){
-			
-				String message = in.readLine();
-		
-				if(message.equalsIgnoreCase("/exit")){
 
+		        	message = in.readLine();
+			
+				if(message.equals("/exit")){
+
+					has_user_exited = true;
 					out.close();
 					in.close();
 					connection.close();
 					break;
-
+				
 				}else if(message.startsWith("@")){
 
 					String target_user_name = message.substring(1,message.indexOf(" "));
-			
+	
 					message = message.substring(message.indexOf(" "));	
 						
 					for(int i = 0; i < max_users; i++){
@@ -128,7 +143,36 @@ public class User extends Thread{
 					}//end for
 					
 
+				}else if(message.equalsIgnoreCase("/help")){
+						
+					out.println("\n-------------Commands------------------------");
+					listCommands();
+					out.println("---------------------------------------------");
+				
+				}else if(message.equalsIgnoreCase("/list")){
+					
+					out.println("------------------------------------------------");
+					ml.listMessages(out);	
+					out.println("\n---------------Last 100 Messages---------------");
+	
+				}else if(message.equalsIgnoreCase("/users")){
+			
+					out.println("\n---------------Users Connected------------------");		
+					for(int i = 0; i < max_users; i++){
+
+						if(users[i] != null){
+
+							out.println(users[i].getUserName());
+
+						}//end if
+
+					}//end for
+					out.println("--------------------------------------------------");	
+
 				}else{
+
+					
+					ml.addMessage("<" + user_name + "> " + message);
 
 					//user sends a public message
 					for(int i = 0; i < max_users; i++){
@@ -144,12 +188,11 @@ public class User extends Thread{
 
 				}//end else
 
+
 			}//end while
 			
-			
-	
 	        }catch(Exception e){
-	
+		
 			e.printStackTrace();		
 			out.println("User not found");
 
@@ -224,19 +267,29 @@ public class User extends Thread{
  	 */ 	
 	public void listCommands(){
 
-		out.println("Commands");
-		out.println("Exit: /exit");
-		out.println("Private Message: @username message example: @bob hello world");
-		out.println("List Messages: /list");
-		out.println("List Users: /users");
-		out.println("Search Previous Messages: /search");
-		out.println("List messages from user: /listuser");
-
+		out.println("Exit:\n");
+		out.println("\t/exit -Exits the program\n");
+		out.println("Private Message: \n");
+		out.println("\t-type @username message");
+		out.println("\t Example: @DonaldTrump there was definatly collusion\n");
+		out.println("List Messages:\n");
+		out.println("\t/list -lists the last 100 messages sent on the server\n");
+		out.println("List Users: \n");
+		out.println("\t/users -lists all users currently connected to the server\n");
+		out.println("List Commands:\n");
+		out.println("\t/help -shows current list");
 	}//end list commands
 
 	/*
  	* Getters and Setters
  	*/
+
+	public boolean hasUserExited(){
+	
+		return has_user_exited;
+
+	}//end hasUserExited
+
 	public String getUserName(){
 		
 		return user_name;

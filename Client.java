@@ -82,6 +82,7 @@ public class Client{
 				if(message.equalsIgnoreCase("/exit")){
 					
 					stillRunning = false;
+					out.println(message);
 					System.out.println("GoodBye");
 					System.exit(0);
 
