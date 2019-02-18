@@ -271,7 +271,7 @@ public class User extends Thread{
 		out.println("\t/exit -Exits the program\n");
 		out.println("Private Message: \n");
 		out.println("\t-type @username message");
-		out.println("\t Example: @DonaldTrump there was definatly collusion\n");
+		out.println("\t Example: @Bob this is a private message\n");
 		out.println("List Messages:\n");
 		out.println("\t/list -lists the last 100 messages sent on the server\n");
 		out.println("List Users: \n");

@@ -148,11 +148,9 @@ class Server{
 			
 			if(users[i] != null){
 
-				System.out.println("user not null");
 				System.out.println(users[i].hasUserExited());
 				if(users[i].hasUserExited()){
 							
-					System.out.println("user is gone deleting...");
 					users[i].deleteUser(users[i].getUserName());
 					users[i] = null;
 					System.out.println("Successfull Deletion");
